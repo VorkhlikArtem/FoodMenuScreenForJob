@@ -19,26 +19,11 @@ class BannerCell: UICollectionViewCell {
         productImageView.layer.cornerRadius = 15
         productImageView.contentMode = .scaleAspectFill
         setupConstraints()
-        
-    
     }
     
     override func prepareForReuse() {
         productImageView.image = nil
     }
-    
-//    override func layoutSubviews() {
-//        super.layoutSubviews()
-//        //clipsToBounds = false
-//        layer.masksToBounds = false
-//        self.layer.shadowOpacity = 0.5
-//        self.layer.shadowColor = UIColor.black.cgColor
-//        self.layer.shadowOffset = .zero
-//        self.layer.shadowRadius = 30
-//
-//        productImageView.layer.cornerRadius = 15
-//    }
-    
     
     func configure(with image: String) {
         productImageView.image = UIImage(named: image)

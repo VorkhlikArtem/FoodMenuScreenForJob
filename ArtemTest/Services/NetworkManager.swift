@@ -8,22 +8,19 @@
 import Foundation
 import Combine
 
-final class CombineNetworkManager {
+protocol DataFetcher {
+    func getCategories() -> AnyPublisher<[Category], Never>
+    func getMeals(category: String) -> AnyPublisher<[Meal], Never>
+    func getDetails(id: String) -> AnyPublisher<[Detail], Never>
+}
+
+final class CombineNetworkManager: DataFetcher {
     
     private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
-        //decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }
-    
-//    // MARK: - fetching Data for Page1 VC
-//    func getMain() -> AnyPublisher<(LatestResponse, FlashSaleResponse), Error> {
-//        return getLatest().zip(getFlashSale()).eraseToAnyPublisher()
-//    }
-//
-    
- 
-    
+
     func getCategories() -> AnyPublisher<[Category], Never> {
         Just(())
             .compactMap {
@@ -65,12 +62,8 @@ final class CombineNetworkManager {
 
     
     
-    // MARK: - Generic Method for Data Fetching
+    // MARK: - Generic Method for Network Data Fetching
     private func fetchData<T: Decodable>(url: URL, type: T.Type) -> AnyPublisher<T, Error> {
-
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
         
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { (data, response) -> Data in

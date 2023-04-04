@@ -45,11 +45,11 @@ class MealCell: UICollectionViewCell {
         productImageView.set(imageURL: mealViewModel.image)
         nameLabel.text = mealViewModel.name
         descriptionLabel.text = mealViewModel.description
-        priceLabel.text = "from 3 $"
+        priceLabel.text = mealViewModel.price
     }
     
+    // MARK: - setup Constraints
     private func setupConstraints() {
-        
         let spacer = UIView()
         spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
         let priceStack = UIStackView(arrangedSubviews: [spacer, priceLabel])
