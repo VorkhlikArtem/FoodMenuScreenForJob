@@ -28,8 +28,6 @@ class MainInteracter: MenuBusinessLogic {
 
         case .getCategories:
             fetcher.getCategories().sink { [weak self] categories in
-                print(categories)
-                
                 self?.presenter?.presentData(response: .presentCategories(categories: categories))
                 
                 if let firstCategory = categories.first?.strCategory {

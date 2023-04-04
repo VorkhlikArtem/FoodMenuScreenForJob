@@ -16,16 +16,22 @@ class MainViewController: UIViewController, MenuDisplayLogic {
     
     var interactor: MenuBusinessLogic?
         
-    var collectionView: UICollectionView!
+    private var collectionView: UICollectionView!
     typealias DataSourceType = UICollectionViewDiffableDataSource<MainViewModel.Section, MainViewModel.Item>
     
-    var dataSource: DataSourceType?
-    var mainViewModel = MainViewModel()
+    private var dataSource: DataSourceType?
+    private var mainViewModel = MainViewModel()
+    let categoryView = CategoryView()
+    
+    var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
         setupCollectionView()
+        setupBindings()
+        dataSource = createDataSource()
+        collectionView.dataSource = dataSource
         
         interactor?.makeRequest(request: .getCategories)
     }
@@ -35,13 +41,21 @@ class MainViewController: UIViewController, MenuDisplayLogic {
       
         case .displayCategories(categoryViewModels: let categoryViewModels):
             mainViewModel.categories = categoryViewModels
-            dataSource = createDataSource()
-            collectionView.dataSource = dataSource
+            categoryView.setup(with: mainViewModel.categories)
             reloadData()
         case .displayMeals(mealViewModel: let mealViewModel):
             mainViewModel.meals.append(mealViewModel)
             reloadData()
         }
+    }
+    
+    private func setupBindings() {
+        categoryView.buttonPublisher.sink { [weak self] index in
+            guard let self = self else {return}
+            let category = self.mainViewModel.categories[index].category
+            self.mainViewModel.meals.removeAll()
+            self.interactor?.makeRequest(request: .getMeals(fromCategory: category))
+        }.store(in: &cancellables)
     }
     
 
@@ -61,10 +75,12 @@ class MainViewController: UIViewController, MenuDisplayLogic {
             return UIButton(configuration: config, primaryAction: nil)
         }()
         
-        let left = UIBarButtonItem(customView: locationButton)
-        navigationItem.leftBarButtonItem = left
+        let leftButton = UIBarButtonItem(customView: locationButton)
+        navigationItem.leftBarButtonItem = leftButton
+        
         navigationController?.navigationBar.barTintColor = .background
         navigationController?.navigationBar.backgroundColor = .background
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
     
     private func setupCollectionView() {
@@ -96,7 +112,7 @@ class MainViewController: UIViewController, MenuDisplayLogic {
 
 // MARK: - Create Data Source
 extension MainViewController {
-    func createDataSource()->DataSourceType{
+    private func createDataSource()->DataSourceType{
         let dataSource = DataSourceType(collectionView: collectionView) { collectionView, indexPath, item  in
             switch item {
             case .mealItem(mealViewModel: let meal) :
@@ -116,16 +132,7 @@ extension MainViewController {
             switch kind {
             case UICollectionView.elementKindSectionHeader:
                 guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CategoryHeader.reuseId, for: indexPath) as? CategoryHeader else {return nil}
-                    
-                sectionHeader.setup(with: self.mainViewModel.categories)
-                    
-                sectionHeader.buttonPublisher.sink { [weak self] index in
-                        print(index)
-                    guard let category = self?.mainViewModel.categories[index].category else {return}
-                        self?.mainViewModel.meals.removeAll()
-                        self?.interactor?.makeRequest(request: .getMeals(fromCategory: category))
-                }.store(in: &sectionHeader.cancellables)
-                    
+                sectionHeader.categoryView = self.categoryView
                 return sectionHeader
             default: return nil
             }
@@ -159,7 +166,7 @@ extension MainViewController {
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 0, leading: 0, bottom: 24, trailing: 0)
+        section.contentInsets = .init(top: 0, leading: 0, bottom: 5, trailing: 0)
        
         let sectionHeader = createSectionHeaderLayout()
         section.boundarySupplementaryItems = [sectionHeader]
@@ -174,7 +181,7 @@ extension MainViewController {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 24, leading: 16, bottom: 0, trailing: 16)
+        section.contentInsets = .init(top: 20, leading: 16, bottom: 0, trailing: 16)
         section.interGroupSpacing = 14
         section.orthogonalScrollingBehavior = .continuous
        

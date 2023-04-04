@@ -91,12 +91,7 @@
 				AC01F75929DA24CA00283A79 /* AppDelegate.swift */,
 				AC01F75B29DA24CA00283A79 /* SceneDelegate.swift */,
 				AC01F79529DC754E00283A79 /* MainTabBarController.swift */,
-				AC01F75D29DA24CA00283A79 /* MainViewController.swift */,
-				AC01F79129DC5C3700283A79 /* MainInteracter.swift */,
-				AC01F79329DC5CA100283A79 /* MainPresenter.swift */,
-				AC01F78F29DC5BF200283A79 /* MainModel.swift */,
-				AC01F78C29DB6B4200283A79 /* Cells & Header */,
-				AC01F78029DAFA7D00283A79 /* ViewModels & Parsing Models */,
+				AC01F79829DC81B100283A79 /* Menu Screen */,
 				AC01F77F29DAFA6800283A79 /* Services */,
 				AC01F78729DB12A000283A79 /* Extensions */,
 				AC01F76229DA24D300283A79 /* Assets.xcassets */,
@@ -153,6 +148,19 @@
 				AC01F78D29DB8CBE00283A79 /* CapsuleButton.swift */,
 			);
 			path = "Custom Views";
+			sourceTree = "<group>";
+		};
+		AC01F79829DC81B100283A79 /* Menu Screen */ = {
+			isa = PBXGroup;
+			children = (
+				AC01F75D29DA24CA00283A79 /* MainViewController.swift */,
+				AC01F79129DC5C3700283A79 /* MainInteracter.swift */,
+				AC01F79329DC5CA100283A79 /* MainPresenter.swift */,
+				AC01F78F29DC5BF200283A79 /* MainModel.swift */,
+				AC01F78029DAFA7D00283A79 /* ViewModels & Parsing Models */,
+				AC01F78C29DB6B4200283A79 /* Cells & Header */,
+			);
+			path = "Menu Screen";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

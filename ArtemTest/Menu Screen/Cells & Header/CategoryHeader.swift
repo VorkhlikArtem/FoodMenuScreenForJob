@@ -10,7 +10,27 @@ import Combine
 
 class CategoryHeader: UICollectionReusableView {
     static var reuseId: String = "CategoryHeader"
-    
+    var categoryView: CategoryView? {
+        didSet {
+            setupConstraints()
+        }
+    }
+
+    private func setupConstraints() {
+        guard let categoryView = categoryView else {return}
+        categoryView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(categoryView)
+        NSLayoutConstraint.activate([
+            categoryView.topAnchor.constraint(equalTo: topAnchor),
+            categoryView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            categoryView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            categoryView.trailingAnchor.constraint(equalTo: trailingAnchor),
+        ])
+    }
+}
+
+
+class CategoryView: UIView {    
     private var initiallySelectedIndex = 0
     
     private let buttonSubject = PassthroughSubject<Int, Never>()
